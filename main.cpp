@@ -53,6 +53,7 @@ public:
 	int drone_scan_count;
 	int visible_creature_count;
 	int radar_blip_count;
+	int	turn;
 };
 
 // Functions
@@ -139,6 +140,7 @@ void	init_game(Game *game, map<int, Creature> *creatures)
 	(*game).drone_scan_count = 0;
 	(*game).visible_creature_count = 0;
 	(*game).radar_blip_count = 0;
+	(*game).turn = 0;
 
 	cin >> (*game).creature_count; cin.ignore();
 	for (int i = 0; i < (*game).creature_count; i++) {
@@ -158,9 +160,15 @@ void	move(int x, int y, int light)
 	cout << "MOVE " << x << " " << y << " " << light << endl;
 }
 
-void	putstr(string str, string val)
+void	print_scans(map<int, Creature> scans)
 {
-	cerr << str << " : " << val << endl;
+	for (auto it = scans.begin(); it != scans.end(); it++)
+	{
+		Creature creature = it->second;
+		fprintf(stderr, "creature.id : %d\n", creature.id);
+		fprintf(stderr, "creature.color : %d\n", creature.color);
+		fprintf(stderr, "creature.type : %d\n\n", creature.type);
+	}
 }
 
 int main()
@@ -173,10 +181,35 @@ int main()
 	init_game(&game, &creatures);
 	while (1) {
 		update_data(&game, &my_drones, &foe_drones, &creatures);
-		
-		for (int i = 0; i < game.my_drone_count; i++) {
-			move(5000, 5000, 0);
-			fprintf(stderr, "my_drones[i].radar : %s\n", my_drones[i].radar.c_str());
+		game.turn++;
+		Drone me1 = my_drones[0];
+		Drone foe1 = foe_drones[0];
+		Drone me2 = my_drones[1];
+		Drone foe2 = foe_drones[1];
+
+		fprintf(stderr, "me1 scans :\n");
+		print_scans(me1.creature_scans);
+		fprintf(stderr, "me2 scans :\n");
+		print_scans(me2.creature_scans);
+
+		if (game.turn <= 5)
+		{
+			move(2500, 2500, 0);
+			move(2500, 2500, 0);
 		}
+		else if (game.turn == 6)
+		{
+			wait(0);
+			wait(0);
+		}
+		else
+		{
+			wait(0);
+			wait(0);
+		}
+		// fprintf(stderr, "my_drones[%d].radar : %s\n", i, my_drones[i].radar.c_str());
+		// for (int i = 0; i < game.my_drone_count; i++) {
+		// 	// 
+		// }
 	}
 }
